@@ -9,14 +9,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Health check route — confirms the server is running (Task 1 proof)
-app.get("/", (req, res) => {
-  res.json({
-    message: "Armanish Kitchen API is running",
-    status: "ok",
-  });
-});
+app.use(express.static("public"));
 
 app.use("/api/menu", menuRoutes);
 

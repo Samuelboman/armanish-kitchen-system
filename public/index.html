@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armanish Kitchen</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Armanish Kitchen</h1>
+    <p>Northern Nigerian native foods, delivered across Abuja</p>
+  </header>
+
+  <main>
+    <section id="menu-section">
+      <h2>Our Menu</h2>
+      <div id="menu-list">Loading menu...</div>
+    </section>
+
+    <section id="menu-order">
+      <h2>add a menu Order</h2>
+      <form id="add-item-form">
+        <input type="text" id="name" placeholder="Item Name" required>
+        <input type="text" id="description" placeholder="Item Description" required>
+        <input type="number" id="price" placeholder="Item Price (₦)" min="0" step="0.01" required>
+       <select id="category">
+          <option value="masa">Masa</option>
+          <option value="kunun aya">Kunun Aya</option>
+          <option value="yamarita">Yamarita</option>
+          <option value="drinks">Drinks</option>
+          <option value="other">Other</option>
+        </select>
+        <button type="submit">Add Item</button>
+      </form>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
