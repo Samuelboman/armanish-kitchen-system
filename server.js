@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
+import menuRoutes from "./routes/menuRoutes.js";
 
 const app = express();
 
@@ -16,6 +17,8 @@ app.get("/", (req, res) => {
     status: "ok",
   });
 });
+
+app.use("/api/menu", menuRoutes);
 
 const PORT = process.env.PORT || 5000;
 
