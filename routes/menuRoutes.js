@@ -6,6 +6,8 @@ import {
   updateMenuItem,
   deleteMenuItem,
 } from "../controllers/menuController.js";
+import { protect, adminOnly } from "../middleware/authMiddleware.js";
+
 
 const router = express.Router();
 

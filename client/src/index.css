@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Sora", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --color-indigo: #22335c;
+  --color-indigo-dark: #182444;
+  --color-amber: #e8a33d;
+  --color-cream: #faf6ee;
+  --color-charcoal: #201d1a;
+  --color-clay: #c1502e;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+}

@@ -66,4 +66,4 @@ addItemForm.addEventListener("submit", async (event) => {
 });
 
 // Load the menu as soon as the page opens
-loadMenu();
+loadMenu(); 

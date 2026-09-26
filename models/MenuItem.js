@@ -19,8 +19,12 @@ const menuItemSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["masa", "kunun aya", "kunun geda", "yamarita", "drinks", "other"],
+      enum: ["masa", "yamarita", "drinks", "other"],
       default: "other",
+    },
+      accompaniments: {
+      type: [String],
+      default: [],
     },
     available: {
       type: Boolean,
