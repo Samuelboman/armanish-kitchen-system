@@ -22,8 +22,16 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["customer", "admin"],
+      enum: ["customer", "admin", "rider"],
       default: "customer",
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    available: {
+      type: Boolean,
+      trim: true,
     },
   },
   { timestamps: true }

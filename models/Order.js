@@ -31,8 +31,13 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "preparing", "ready", "delivered"],
+      enum: ["pending", "confirmed", "preparing", "ready", "out_for_delivery", "delivered"],
       default: "pending",
+    },
+    assignedRider: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
     totalPrice: {
       type: Number,
