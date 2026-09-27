@@ -1,6 +1,7 @@
 import Order from "../models/Order.js";
 import MenuItem from "../models/MenuItem.js";
 import User from "../models/User.js";
+import { getIO } from "../config/socket.js";
 
 // POST /api/orders — create a new order
 export const createOrder = async (req, res) => {
@@ -114,6 +115,10 @@ export const updateOrderStatus = async (req, res) => {
 
     order.status = status;
     await order.save();
+
+     // Broadcast this status change live to anyone listening for this specific order —
+    // e.g. a customer's order-tracking page updates instantly, no refresh needed.
+    getIO().emit(`order-status-${order._id}`, { status: order.status });
 
     res.status(200).json({ success: true, data: order });
   } catch (error) {

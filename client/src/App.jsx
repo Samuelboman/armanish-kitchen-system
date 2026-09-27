@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import CategoryPills from "./components/CategoryPills";
 import MenuGrid from "./components/MenuGrid";
 import CartBar from "./components/CartBar";
+import OrderTracker from "./components/OrderTracker";
 
 const API_URL = "http://localhost:5000/api/menu";
 
@@ -62,6 +63,10 @@ export default function App() {
       )}
 
       <CartBar cartItems={cart} total={total} onCheckout={handleCheckout} />
+      <div className="px-5 pb-24">
+      <OrderTracker orderId="6ab7628b70c8f09dd51ae4ab" />
+      </div>
     </div>
+    
   );
 }
