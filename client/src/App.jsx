@@ -64,7 +64,7 @@ export default function App() {
 
       <CartBar cartItems={cart} total={total} onCheckout={handleCheckout} />
       <div className="px-5 pb-24">
-      <OrderTracker orderId="6ab7628b70c8f09dd51ae4ab" />
+      {/* <OrderTracker orderId="6ab7628b70c8f09dd51ae4ab" /> */}
       </div>
     </div>
     
