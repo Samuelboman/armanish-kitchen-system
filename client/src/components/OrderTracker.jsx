@@ -8,7 +8,7 @@ export default function OrderTracker({ orderId }) {
 
   useEffect(() => {
     // Open a live connection to the backend
-    const socket = io("http://localhost:5000");
+    const socket = io(import.meta.env.VITE_API_URL);
 
     // Listen specifically for updates to THIS order — matches the
     // event name pattern the backend emits: `order-status-<orderId>`

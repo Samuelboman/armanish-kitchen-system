@@ -5,7 +5,7 @@ import MenuGrid from "./components/MenuGrid";
 import CartBar from "./components/CartBar";
 import OrderTracker from "./components/OrderTracker";
 
-const API_URL = "http://localhost:5000/api/menu";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/menu`;
 
 export default function App() {
   const [menuItems, setMenuItems] = useState([]);
@@ -19,6 +19,7 @@ export default function App() {
       try {
         const response = await fetch(API_URL);
         const result = await response.json();
+
         if (result.success) {
           setMenuItems(result.data);
         }
@@ -28,6 +29,7 @@ export default function App() {
         setLoading(false);
       }
     }
+
     fetchMenu();
   }, []);
 
@@ -37,36 +39,75 @@ export default function App() {
       ? menuItems
       : menuItems.filter((item) => item.category === activeCategory);
 
-  // Add an item (with its chosen accompaniment, if any) to the cart
+  // Add an item to the cart
   const handleAddToCart = (item, selectedOption) => {
     setCart((prevCart) => [
       ...prevCart,
-      { ...item, selectedOption, cartId: Date.now() },
+      {
+        ...item,
+        selectedOption,
+        cartId: Date.now(),
+      },
     ]);
   };
 
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-  const handleCheckout = () => {
-    alert(`Checkout coming soon! Total: ₦${total}`);
-  };
+  const handleCheckout = async () => {
+    const customerName = prompt("What name should we put this order under?");
 
-  return (
+    if (!customerName) return;
+
+    const orderPayload = {
+      customerName,
+      items: cart.map((item) => ({
+        menuItem: item._id,
+        quantity: 1,
+      })),
+    };
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/orders`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderPayload),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`Order placed! Total: ₦${result.data.totalPrice}`);
+        setCart([]);
+      } else {
+        alert("Failed to place order: " + result.message);
+      }
+    } catch (error) {
+      alert("Something went wrong placing your order.");
+      console.error("Checkout error:", error);
+    }
+  };
+    return (
     <div className="min-h-screen bg-cream">
       <Header cartCount={cart.length} />
-      <CategoryPills activeCategory={activeCategory} onSelect={setActiveCategory} />
+      <CategoryPills
+        activeCategory={activeCategory}
+        onSelect={setActiveCategory}
+      />
 
       {loading ? (
-        <p className="px-5 py-10 text-center text-charcoal/50">Loading menu...</p>
+        <p className="px-5 py-10 text-center text-charcoal/50">
+          Loading menu...
+        </p>
       ) : (
         <MenuGrid items={filteredItems} onAddToCart={handleAddToCart} />
       )}
 
       <CartBar cartItems={cart} total={total} onCheckout={handleCheckout} />
-      <div className="px-5 pb-24">
-      {/* <OrderTracker orderId="6ab7628b70c8f09dd51ae4ab" /> */}
-      </div>
     </div>
-    
   );
 }
