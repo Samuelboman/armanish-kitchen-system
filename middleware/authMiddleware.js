@@ -29,3 +29,9 @@ export const adminOnly = (req, res, next) => {
   }
   next();
 };
+export const allowRoles = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    return res.status(403).json({ success: false, message: "Not allowed"});
+  }
+  next();
+};

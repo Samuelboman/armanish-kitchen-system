@@ -7,6 +7,9 @@ import { initSocket } from "./config/socket.js";
 import menuRoutes from "./routes/menuRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import deliveryAreaRoutes from "./routes/deliveryAreaRoutes.js";
+import deliveryRoutes from "./routes/deliveryRoutes.js";
+import { protect } from "./middleware/authMiddleware.js";
 
 const app = express();
 
@@ -18,6 +21,9 @@ app.use(express.static("public"));
 app.use("/api/menu", menuRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/delivery-areas", deliveryAreaRoutes);
+app.use("/api/delivery", deliveryRoutes);
+app.use("/api/me", protect, authRoutes); // GET /api/me — returns the logged-in user's info
 
 const PORT = process.env.PORT || 5000;
 

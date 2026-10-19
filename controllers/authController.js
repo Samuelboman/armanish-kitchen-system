@@ -14,7 +14,7 @@ const generateToken = (user) => {
 // POST /api/signup - create a new user account
 export const signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
 
@@ -30,7 +30,6 @@ export const signup = async (req, res) => {
       name,
       email,
       password,
-      role,
     });
 
     const token = generateToken(user);
@@ -100,5 +99,18 @@ export const login = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+export const me = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("name email role");
+    if (!user) return res.status(401).json({ success: false, message: "Account not found" });
+    res.status(200).json({
+      success: true,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

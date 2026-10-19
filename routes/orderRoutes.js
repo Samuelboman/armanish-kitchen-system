@@ -1,7 +1,7 @@
 import express from "express";
 import { createOrder, getAllOrders, getOrderById,  assignRider, updateOrderStatus, } from "../controllers/orderController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
-
+import { allowRoles } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/", createOrder);                          // POST /api/orders — anyone can place an order
@@ -10,3 +10,4 @@ router.get("/:id", getOrderById);                        // GET  /api/orders/:id
 router.put("/:id/assign-rider", protect, adminOnly, assignRider); // PUT  /api/orders/:id/assign-rider — admin only
 router.put("/:id/status", protect, updateOrderStatus);   // PUT  /api/orders/:id/status — rider updates status on THEIR OWN assigned order
 export default router;
+router.put("/:id/status", protect, allowRoles("admin", "rider"), updateOrderStatus);

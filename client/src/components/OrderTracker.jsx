@@ -1,47 +1,64 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { Check } from "lucide-react";
+import Card from "./ui/Card";
+import { API_URL } from "../lib/api";
+import { cx } from "../lib/cx";
+import { statusLabel, statusSteps } from "../config/orderStatus";
 
-const statusSteps = ["pending", "confirmed", "preparing", "ready", "out_for_delivery", "delivered"];
-
-export default function OrderTracker({ orderId }) {
-  const [status, setStatus] = useState("pending");
+// Live order status. Starts from the status the page loaded with (B4: it used to always
+// start at "pending"), then follows updates the server broadcasts when an admin changes
+// the status or assigns a rider.
+export default function OrderTracker({ orderId, initialStatus = "pending", orderType }) {
+  const [status, setStatus] = useState(initialStatus);
+  const steps = statusSteps(orderType);
 
   useEffect(() => {
-    // Open a live connection to the backend
-    const socket = io(import.meta.env.VITE_API_URL);
-
-    // Listen specifically for updates to THIS order — matches the
-    // event name pattern the backend emits: `order-status-<orderId>`
+    // Listen only for THIS order's event: `order-status-<orderId>`.
+    const socket = io(API_URL || undefined, { transports: ["websocket", "polling"] });
     socket.on(`order-status-${orderId}`, (data) => {
-      setStatus(data.status);
+      if (data?.status) setStatus(data.status);
     });
-
-    // Cleanup: close the connection when this component is no longer shown,
-    // so we don't leave sockets open forever in the background.
+    // Close the connection when the page is left.
     return () => {
       socket.disconnect();
     };
   }, [orderId]);
 
-  const currentIndex = statusSteps.indexOf(status);
+  const currentIndex = Math.max(0, steps.indexOf(status));
 
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <h3 className="font-display text-lg font-bold text-indigo">Order Status</h3>
-      <div className="mt-4 flex items-center gap-2">
-        {statusSteps.map((step, i) => (
-          <div key={step} className="flex flex-1 flex-col items-center">
-            <div
-              className={`h-3 w-3 rounded-full ${
-                i <= currentIndex ? "bg-amber" : "bg-charcoal/15"
-              }`}
-            />
-            <span className="mt-1 text-center text-[10px] capitalize text-charcoal/60">
-              {step.replace("_", " ")}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Card className="p-5 sm:p-6">
+      <h2 className="font-display text-xl font-bold">Order status</h2>
+      <p className="mt-1 text-muted" aria-live="polite">
+        {statusLabel(status, orderType)}
+      </p>
+      <ol className="mt-4 space-y-1">
+        {steps.map((step, index) => {
+          const done = index < currentIndex;
+          const current = index === currentIndex;
+          return (
+            <li key={step} aria-current={current ? "step" : undefined} className="flex items-center gap-3 py-1">
+              <span
+                aria-hidden="true"
+                className={cx(
+                  "grid size-7 shrink-0 place-items-center rounded-full border-2",
+                  done && "border-ink bg-ink text-white",
+                  current && "border-ink bg-orange",
+                  !done && !current && "border-field bg-surface"
+                )}
+              >
+                {done && <Check className="size-4" />}
+              </span>
+              <span className={cx(current ? "font-semibold" : done ? "" : "text-muted")}>
+                {statusLabel(step, orderType)}
+                {done && <span className="sr-only"> (done)</span>}
+                {current && <span className="sr-only"> (current)</span>}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </Card>
   );
 }

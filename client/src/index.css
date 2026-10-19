@@ -1,19 +1,122 @@
 @import "tailwindcss";
 
-@theme {
-  --font-display: "Sora", sans-serif;
-  --font-body: "Inter", sans-serif;
+/*
+  Armanish Delight design tokens.
 
-  --color-indigo: #22335c;
-  --color-indigo-dark: #182444;
-  --color-amber: #e8a33d;
-  --color-cream: #faf6ee;
-  --color-charcoal: #201d1a;
-  --color-clay: #c1502e;
+  Palette from the owner's flyer. Contrast (WCAG AA needs 4.5:1 for text):
+    ink on orange 10.55, ink on yellow 13.21, ink on off-white 19.92  -> pass
+    white on orange 1.98, white on yellow 1.58                        -> fail
+  So orange and yellow surfaces always carry near-black (ink) text, never white.
+*/
+@theme {
+  /* Only the colours below exist; Tailwind's default palette is switched off so
+     every colour in the UI comes from this list. */
+  --color-*: initial;
+
+  --color-orange: #f0ac15;
+  --color-orange-hover: #e39c08; /* ink on it: 8.97 */
+  --color-yellow: #fec607;
+  --color-red: #aa0103; /* the logo red. Used only for errors and delete actions (white on it: 7.74) */
+  --color-ink: #010101; /* near-black text */
+  --color-white: #ffffff;
+
+  --color-page: #fff9ee; /* warm off-white page background */
+  --color-surface: #ffffff; /* cards, panels */
+  --color-muted: #5c5346; /* secondary text on white or off-white only (7.2:1). Not on orange (3.8:1) */
+  --color-field: #8a7e6b; /* form field borders (3.8:1, needs 3:1) */
+  --color-line: #eadfcb; /* decorative dividers */
+  --color-subtle: #efe7d8; /* "Not available" pill, image placeholder */
+
+  /* Hero and footer colour: set by data-hero on <html> (see below). */
+  --color-hero: var(--hero-bg);
+  --color-on-hero: var(--hero-fg);
+
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.25rem;
+  --radius-image: 1rem;
+
+  --shadow-card: 0 1px 2px rgb(1 1 1 / 0.04), 0 8px 24px rgb(92 83 70 / 0.1);
+  --shadow-lift: 0 2px 4px rgb(1 1 1 / 0.05), 0 16px 36px rgb(92 83 70 / 0.16);
 }
 
-body {
-  font-family: var(--font-body);
-  background-color: var(--color-cream);
-  color: var(--color-charcoal);
+/*
+  HERO AND FOOTER COLOUR SWITCH
+  One line to change: data-hero on <html> in client/index.html.
+    data-hero="orange"  orange #F0AC15 with near-black text (current choice)
+    data-hero="red"     deep red #AA0103 with white text
+  The text colour follows automatically, so contrast stays correct.
+*/
+:root,
+:root[data-hero="orange"] {
+  --hero-bg: var(--color-orange);
+  --hero-fg: var(--color-ink);
+}
+
+:root[data-hero="red"] {
+  --hero-bg: var(--color-red);
+  --hero-fg: var(--color-white);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-page);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+
+  /* One visible focus style everywhere: a thick near-black ring (10.55:1 on orange). */
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  /* On dark backgrounds the ring turns yellow (13.21:1 on ink). */
+  .on-dark :focus-visible,
+  .on-dark:focus-visible {
+    outline-color: var(--color-yellow);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Bold, uppercase display headings (hero, section titles). */
+@utility display-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+/* Horizontal swipe rows (category strip, info cards on phones). */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
